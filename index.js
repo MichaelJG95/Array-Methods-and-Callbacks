@@ -101,10 +101,13 @@ Use the higher order function getAverageGoals to do the following:
  Example of invocation: getAverageGoals(getFinals(fifaData));
 */
 
-function getAverageGoals(/* code here */) {
-   /* code here */
+function getAverageGoals(callback) {
+   const goalsPerMatch = callback.map(item => item['Home Team Goals'] + item['Away Team Goals'])
+   const sumGoals = goalsPerMatch.reduce((acc, item) => item + acc)
+   return (Math.round((sumGoals / goalsPerMatch.length) * 100) / 100) + "";
 }
 
+console.log(getAverageGoals(getFinals(fifaData)));
 
 
 
