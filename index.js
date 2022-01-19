@@ -120,7 +120,7 @@ Hint: Investigate your data to find "team initials"!
 Hint: use `.reduce` */
 
 function getCountryWins(data, teamInitials, callback) {
-    const wins = callback(data).reduce((acc, item) => {
+    const wins = /*callback(data)*/data.reduce((acc, item) => {
         if(item['Home Team Initials'] === teamInitials && item['Home Team Goals'] > item['Away Team Goals']){
             return acc + 1;
         }else if(item['Away Team Initials'] === teamInitials && item['Away Team Goals'] > item['Home Team Goals']){
@@ -132,7 +132,7 @@ function getCountryWins(data, teamInitials, callback) {
     return teamInitials + ': ' + wins;
 }
 
-console.log(getCountryWins(fifaData, 'BRA', getFinals));
+console.log(getCountryWins(fifaData, 'ARG', getFinals));
 
 /* 💪💪💪💪💪 Stretch 2: 💪💪💪💪💪 
 Write a function called getGoals() that accepts a parameter `data` and returns the team with the most goals score per appearance (average goals for) in the World Cup finals */
@@ -156,11 +156,9 @@ function getGoals(data, callback) {
         goalsPerMatch[item['Away Team Name']] += item['Away Team Goals'];
         appearances[item['Away Team Name']] += 1;
     });
-    console.log('goals: ', goalsPerMatch);
-    console.log('apperances: ', appearances);
     const countries = Object.keys(goalsPerMatch);
     let topScorer = countries[0];
-    let mostGoals = 0
+    let mostGoals = 0;
 
     countries.forEach(country => {
         if((goalsPerMatch[country] / appearances[country]) > mostGoals){
@@ -179,12 +177,41 @@ console.log(getGoals(fifaData, getFinals));
 /* 💪💪💪💪💪 Stretch 3: 💪💪💪💪💪
 Write a function called badDefense() that accepts a parameter `data` and calculates the team with the most goals scored against them per appearance (average goals against) in the World Cup finals */
 
-function badDefense(/* code here */) {
+function badDefense(data, callback) {
 
-    /* code here */
+    const goalData = callback(data)
+    const goalsPerMatch = {};
+    const appearances = {};
+    goalData.forEach(item => {
+        goalsPerMatch[item['Home Team Name']] = 0;
+        appearances[item['Home Team Name']] = 0
+        goalsPerMatch[item['Away Team Name']] = 0;
+        appearances[item['Away Team Name']] = 0;
 
+    });
+
+    goalData.forEach(item => {
+        goalsPerMatch[item['Home Team Name']] += item['Away Team Goals'];
+        appearances[item['Home Team Name']] += 1;
+
+        goalsPerMatch[item['Away Team Name']] += item['Home Team Goals'];
+        appearances[item['Away Team Name']] += 1;
+    });
+    const countries = Object.keys(goalsPerMatch);
+    let topLoser = "";
+    let mostGoals = 0;
+    countries.forEach(country => {
+        if((goalsPerMatch[country] / appearances[country]) > mostGoals){
+            mostGoals = goalsPerMatch[country] / appearances[country];
+            topLoser = country;
+        } else if((goalsPerMatch[country] / appearances[country]) === mostGoals) {
+            topLoser = topLoser + ' ' + country;
+        }
+    })
+    return topLoser;
 }
 
+console.log(badDefense(fifaData, getFinals));
 
 /* If you still have time, use the space below to work on any stretch goals of your chosing as listed in the README file. */
 
